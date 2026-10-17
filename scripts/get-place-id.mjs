@@ -51,37 +51,43 @@ async function lookup(browser, name, idx) {
     }
     if (!ctx) throw new Error("Não encontrei a caixa de busca do Google na página.");
 
-    // Etapa 2: digitar o nome na caixa de busca
-    const input = ctx.locator("gmp-place-autocomplete input").first();
-    await input.waitFor({ state: "visible", timeout: 30000 });
-    await input.click();
-    await input.pressSequentially(name, { delay: 70 });
+    // A caixa de busca e o balão ficam em shadow DOM fechado: não dá para usar seletores lá dentro.
+    // Escutamos o mesmo evento que a página usa (gmp-select), que já traz o Place ID escolhido.
+    const box = ctx.locator("gmp-place-autocomplete").first();
+    await box.waitFor({ state: "visible", timeout: 30000 });
+    await box.evaluate((el) => {
+      window.__placeSel = null;
+      el.addEventListener("gmp-select", ({ placePrediction: p }) => {
+        window.__placeSel = { id: p.placeId, name: p.mainText?.text || "", address: p.secondaryText?.text || "" };
+      });
+    });
 
-    // Etapa 3: esperar as sugestões e listar
-    const options = ctx.locator('gmp-place-autocomplete [role="option"]');
+    // Etapa 2: digitar o nome na caixa de busca
+    await box.click();
+    await page.keyboard.type(name, { delay: 70 });
+
+    // Etapa 3: esperar as sugestões e listar (lidas pela árvore de acessibilidade)
     let suggestions = [];
     try {
-      await options.first().waitFor({ state: "visible", timeout: 8000 });
-      suggestions = (await options.allInnerTexts()).map((t) => t.replace(/\s+/g, " ").trim());
-    } catch {
-      await page.waitForTimeout(3000); // se a lista não for acessível, segue pelo teclado
-    }
+      const cdp = await context.newCDPSession(page);
+      const end = Date.now() + 8000;
+      while (!suggestions.length && Date.now() < end) {
+        await page.waitForTimeout(500);
+        const { nodes } = await cdp.send("Accessibility.getFullAXTree");
+        suggestions = nodes.filter((n) => n.role?.value === "option" && !n.ignored)
+          .map((n) => (n.name?.value || "").replace(/\s+/g, " ").trim()).filter(Boolean);
+      }
+    } catch { /* lista indisponível, segue pelo teclado */ }
+    if (!suggestions.length) await page.waitForTimeout(3000);
     if (suggestions.length) console.log(`  sugestões: ${suggestions.map((s, i) => `${i + 1}) ${s}`).join(" | ")}`);
 
     // Seleciona o resultado escolhido (padrão: 1º)
     for (let i = 0; i < pick; i++) await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
 
-    // Etapa 4: ler o Place ID que aparece no balão
-    await ctx.waitForFunction(() => {
-      const el = document.querySelector("#place-id");
-      return el && el.textContent && el.textContent.trim().length > 5;
-    }, null, { timeout: 20000 });
-
-    const read = (sel) => ctx.locator(sel).first().innerText().then((t) => t.trim()).catch(() => "");
-    const placeId = await read("#place-id");
-    const placeName = await read("#place-name");
-    const address = await read("#place-address");
+    // Etapa 4: ler o Place ID do local selecionado
+    await ctx.waitForFunction(() => window.__placeSel?.id, null, { timeout: 20000 });
+    const { id: placeId, name: placeName, address } = await ctx.evaluate(() => window.__placeSel);
     return { ok: true, query: name, placeId, placeName, address, suggestions, link: REVIEW_BASE + placeId };
   } catch (e) {
     await page.screenshot({ path: `out/erro-${idx + 1}.png`, fullPage: true }).catch(() => {});
