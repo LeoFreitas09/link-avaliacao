@@ -103,8 +103,10 @@
   <header>
     <div class="stars" aria-hidden="true">★★★★★</div>
     <h1>Link de avaliação do Google</h1>
-    <p>Encontre o estabelecimento no Google Maps, cole o endereço da página aqui e pegue o link que abre direto a tela de avaliação.</p>
+    <p id="intro">Encontre o estabelecimento no Google Maps, cole o endereço da página aqui e pegue o link que abre direto a tela de avaliação.</p>
   </header>
+
+  <section id="topo" class="step" hidden aria-live="polite"></section>
 
   <section class="step" aria-labelledby="s1">
     <h2 id="s1"><span class="n">1</span> Buscar no Google Maps</h2>
@@ -119,10 +121,10 @@
     <div class="row">
       <a id="abrirMaps" class="btn" href="#" target="_blank" rel="noopener">Abrir busca no Google Maps ↗</a>
     </div>
-    <p class="hint">No Maps, clique no estabelecimento certo. Quando a ficha dele abrir, copie o endereço da barra do navegador.</p>
+    <p class="hint">No computador: clique no estabelecimento certo e copie o endereço da barra do navegador.<br>No iPhone: abra a ficha do estabelecimento no app do Maps, toque em Compartilhar e escolha <strong>Link de avaliação</strong> (veja como configurar no fim da página).</p>
   </section>
 
-  <section class="step" aria-labelledby="s2">
+  <section class="step" id="passo2" aria-labelledby="s2">
     <h2 id="s2"><span class="n">2</span> Colar o endereço da página do Maps</h2>
     <label for="mapsUrl">Endereço do Google Maps (ou o Place ID)
       <textarea id="mapsUrl" spellcheck="false">https://www.google.com/maps/place/KRAV+MAGA+CAVEIRA+Valinhos/@-22.9724602,-46.9993958,17z/data=!3m1!4b1!4m6!3m5!1s0x94c8cd1ad952b889:0x4dee22e113e702b0!8m2!3d-22.9724602!4d-46.9993958!16s%2Fg%2F11yr1lyhh9</textarea>
@@ -137,6 +139,7 @@
       <div class="kv link-box"><span>Link de avaliação</span><code id="link"></code></div>
       <div class="row">
         <button id="copiar" class="btn" type="button">Copiar link</button>
+        <button id="enviar" class="btn ghost" type="button" hidden>Enviar…</button>
         <a id="testar" class="btn ghost" href="#" target="_blank" rel="noopener">Testar link ↗</a>
         <a id="conferir" class="btn ghost" href="#" target="_blank" rel="noopener">Ver no Maps ↗</a>
       </div>
@@ -148,13 +151,16 @@
     <ul id="lista"></ul>
   </section>
 
-  <details>
-    <summary>Pelo celular</summary>
+  <details id="iphone">
+    <summary>Configurar no iPhone (uma vez só)</summary>
     <ol>
-      <li>Toque em "Abrir busca no Google Maps". Se abrir o aplicativo do Maps, use a opção de abrir no navegador.</li>
-      <li>Toque no estabelecimento certo e copie o endereço da barra do navegador.</li>
-      <li>Links curtos (maps.app.goo.gl) do botão "Compartilhar" não funcionam aqui: abra o link curto no navegador e copie o endereço completo que aparecer.</li>
+      <li>Abra o app <strong>Atalhos</strong> e toque em <strong>+</strong> para criar um atalho novo. Dê o nome <strong>Link de avaliação</strong>.</li>
+      <li>Adicione a ação <strong>Expandir URL</strong>. Ela usa a <strong>Entrada do Atalho</strong>.</li>
+      <li>Adicione a ação <strong>Texto</strong> e escreva:<br><code>https://leofreitas09.github.io/link-avaliacao/?u=</code> e, logo em seguida, insira a variável <strong>URL Expandida</strong>.</li>
+      <li>Adicione a ação <strong>Abrir URLs</strong> (ela usa o Texto do passo anterior).</li>
+      <li>Toque no ícone ⓘ (ou no nome do atalho, no topo) e ligue <strong>Mostrar na Folha de Compartilhamento</strong>. Em tipos aceitos, deixe <strong>URLs</strong> e <strong>Texto</strong>.</li>
     </ol>
+    <p>Para usar: no app do Google Maps, abra o estabelecimento, toque em <strong>Compartilhar</strong> e escolha <strong>Link de avaliação</strong>. Esta página abre com o link pronto para copiar ou enviar.</p>
   </details>
 </main>
 
@@ -175,7 +181,7 @@
     const t = text.trim();
     if (!t) return { empty: true };
     if (/maps\.app\.goo\.gl|goo\.gl\/maps/i.test(t)) {
-      return { error: "Esse é um link curto do botão Compartilhar. Abra ele no navegador e copie o endereço completo que aparecer na barra." };
+      return { error: "Esse é um link curto do botão Compartilhar. No iPhone, confira se o atalho tem a ação Expandir URL. No computador, abra o link curto no navegador e copie o endereço completo que aparecer na barra." };
     }
     let name = "";
     const nm = t.match(/\/maps\/place\/([^/@?]+)/);
@@ -261,8 +267,35 @@
   $("copiar").addEventListener("click", () => copy($("link").textContent, $("copiar")));
   $("limpar").addEventListener("click", () => { isExample = false; $("mapsUrl").value = ""; update(); $("mapsUrl").focus(); });
 
+  // Enviar pelo menu do celular (WhatsApp, Mensagens…)
+  if (navigator.share) {
+    $("enviar").hidden = false;
+    $("enviar").addEventListener("click", () => {
+      navigator.share({ title: $("nomeLocal").textContent, url: $("link").textContent }).catch(() => {});
+    });
+  }
+
+  // Vindo do Atalho do iPhone: ?u=<endereço expandido do Maps>. Mostra o resultado no topo.
+  function fromShortcut() {
+    const href = location.href;
+    const i = href.indexOf("?u=");
+    if (i < 0) return "";
+    let raw = href.slice(i + 3);
+    if (/^https?%3A/i.test(raw)) { try { raw = decodeURIComponent(raw); } catch {} }
+    return raw;
+  }
+  const shared = fromShortcut();
+  if (shared) {
+    isExample = false;
+    $("mapsUrl").value = shared;
+    $("topo").append($("erro"), $("resultado"));
+    $("topo").hidden = false;
+    $("intro").hidden = true;
+  }
+
   updateSearch();
   update();
+  if (shared) $("tag").textContent = "Pronto";
   renderHist();
 </script>
 </body>
