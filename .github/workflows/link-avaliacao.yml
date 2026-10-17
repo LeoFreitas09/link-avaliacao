@@ -1,0 +1,39 @@
+name: Gerar link de avaliação do Google
+
+on:
+  workflow_dispatch:
+    inputs:
+      nome:
+        description: "Nome do estabelecimento como no Google Maps (um por linha para vários)"
+        required: true
+        default: "Krav Maga Caveira Valinhos"
+      resultado:
+        description: "Qual resultado usar (1 = primeiro da lista)"
+        required: false
+        default: "1"
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar Playwright
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Buscar Place ID
+        env:
+          NAMES: ${{ inputs.nome }}
+          PICK: ${{ inputs.resultado }}
+        run: node scripts/get-place-id.mjs
+      - name: Guardar resultados e prints de erro
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultado
+          path: out/
+          if-no-files-found: ignore
