@@ -62,19 +62,30 @@ async function lookup(browser, name, idx) {
       });
     });
 
+    // O campo de texto interno é montado alguns segundos depois do elemento aparecer.
+    // Esperamos ele surgir na árvore de acessibilidade e focamos direto nele.
+    const cdp = await context.newCDPSession(page);
+    const axNodes = async (role) => (await cdp.send("Accessibility.getFullAXTree")).nodes
+      .filter((n) => n.role?.value === role && !n.ignored);
+    let focused = false;
+    for (const end = Date.now() + 30000; !focused && Date.now() < end; await page.waitForTimeout(500)) {
+      const [field] = await axNodes("combobox").catch(() => []);
+      if (field?.backendDOMNodeId) {
+        focused = await cdp.send("DOM.focus", { backendNodeId: field.backendDOMNodeId }).then(() => true, () => false);
+      }
+    }
+    if (!focused) await box.click(); // página em iframe: tenta pelo clique
+
     // Etapa 2: digitar o nome na caixa de busca
-    await box.click();
     await page.keyboard.type(name, { delay: 70 });
 
     // Etapa 3: esperar as sugestões e listar (lidas pela árvore de acessibilidade)
     let suggestions = [];
     try {
-      const cdp = await context.newCDPSession(page);
       const end = Date.now() + 8000;
       while (!suggestions.length && Date.now() < end) {
         await page.waitForTimeout(500);
-        const { nodes } = await cdp.send("Accessibility.getFullAXTree");
-        suggestions = nodes.filter((n) => n.role?.value === "option" && !n.ignored)
+        suggestions = (await axNodes("option"))
           .map((n) => (n.name?.value || "").replace(/\s+/g, " ").trim()).filter(Boolean);
       }
     } catch { /* lista indisponível, segue pelo teclado */ }
