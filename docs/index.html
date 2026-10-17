@@ -1,5 +1,9 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Link de Avaliação Google</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
@@ -34,7 +38,8 @@
     --warn-bg: #3a2a10; --warn-ink: #ffd18a; --ok-bg: #18322a;
     color-scheme: dark;
   }
-  body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
   .wrap {
     max-width: 620px; margin: 0 auto; padding-block: 32px 48px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -91,6 +96,8 @@
   details ol { padding-left: 20px; margin: 8px 0 0; display: grid; gap: 4px; }
   @media (prefers-reduced-motion: no-preference) { .result { transition: border-color .2s; } }
 </style>
+</head>
+<body>
 
 <main class="wrap">
   <header>
@@ -258,3 +265,5 @@
   update();
   renderHist();
 </script>
+</body>
+</html>

@@ -8,6 +8,14 @@ https://search.google.com/local/writereview?placeid=<PLACE ID DO LOCAL>
 
 Roda de graça no **GitHub Actions**. Não precisa de chave de API nem de cartão no Google Cloud.
 
+## Jeito mais rápido: a página
+
+**https://leofreitas09.github.io/link-avaliacao/**
+
+Digite nome e cidade, abra a busca no Google Maps, clique no estabelecimento certo,
+copie o endereço da página do Maps e cole na página. O link sai na hora.
+O código fica em `docs/index.html`.
+
 ## Como funciona
 
 Um robô (Playwright) faz o mesmo caminho que você faria à mão:
