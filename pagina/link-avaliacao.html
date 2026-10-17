@@ -1,0 +1,260 @@
+<title>Link de Avaliação Google</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: uma coluna estreita, dois passos em sequência e o resultado em destaque logo abaixo */
+  :root {
+    --bg: #f6f7f4;
+    --surface: #ffffff;
+    --ink: #1c2420;
+    --muted: #5d6a63;
+    --line: #dde3dd;
+    --accent: #1f6b4f;
+    --accent-ink: #ffffff;
+    --star: #e8a317;
+    --warn-bg: #fff4e0;
+    --warn-ink: #7a4a00;
+    --ok-bg: #e6f3ec;
+    --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121815; --surface: #1a221e; --ink: #e8eee9; --muted: #9aa8a0; --line: #2c3731;
+      --accent: #5cc195; --accent-ink: #0d1612; --star: #f2b93b;
+      --warn-bg: #3a2a10; --warn-ink: #ffd18a; --ok-bg: #18322a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121815; --surface: #1a221e; --ink: #e8eee9; --muted: #9aa8a0; --line: #2c3731;
+    --accent: #5cc195; --accent-ink: #0d1612; --star: #f2b93b;
+    --warn-bg: #3a2a10; --warn-ink: #ffd18a; --ok-bg: #18322a;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+  .wrap {
+    max-width: 620px; margin: 0 auto; padding-block: 32px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid; gap: 28px;
+  }
+  header { display: grid; gap: 6px; }
+  .stars { color: var(--star); letter-spacing: 3px; font-size: 18px; }
+  h1 { font-family: var(--display); font-weight: 700; font-size: clamp(28px, 6vw, 38px); line-height: 1.1; margin: 0; text-wrap: balance; }
+  header p { margin: 0; color: var(--muted); max-width: 52ch; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 20px; margin: 0; display: flex; gap: 10px; align-items: baseline; }
+  h2 .n { font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 500; }
+  .step { display: grid; gap: 14px; }
+  .hint { margin: 0; color: var(--muted); font-size: 14px; }
+  .fields { display: grid; grid-template-columns: 3fr 2fr; gap: 10px; }
+  @media (max-width: 480px) { .fields { grid-template-columns: 1fr; } }
+  label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .02em; min-width: 0; }
+  input, textarea {
+    font: inherit; font-size: 16px; color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; box-sizing: border-box;
+  }
+  textarea { font-family: var(--mono); font-size: 13px; resize: vertical; min-height: 72px; word-break: break-all; }
+  input:focus-visible, textarea:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font: inherit; font-weight: 600; font-size: 15px; text-decoration: none; cursor: pointer;
+    border-radius: 8px; padding: 10px 16px; border: 1px solid var(--accent);
+    background: var(--accent); color: var(--accent-ink);
+  }
+  .btn.ghost { background: transparent; color: var(--accent); }
+  .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .msg { margin: 0; padding: 10px 12px; border-radius: 8px; font-size: 14px; background: var(--warn-bg); color: var(--warn-ink); }
+  .result {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 18px; display: grid; gap: 14px; min-width: 0;
+  }
+  .result .tag { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .result h3 { font-family: var(--display); font-weight: 600; font-size: 22px; margin: 0; line-height: 1.2; text-wrap: balance; }
+  .kv { display: grid; gap: 4px; min-width: 0; }
+  .kv span { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .kv code { font-family: var(--mono); font-size: 13px; word-break: break-all; user-select: all; }
+  .link-box { background: var(--ok-bg); border-radius: 8px; padding: 12px; }
+  .history { display: grid; gap: 10px; }
+  .history ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .history li { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--line); }
+  .history li div { min-width: 0; }
+  .history li strong { display: block; font-weight: 600; overflow-wrap: anywhere; }
+  .history li small { color: var(--muted); font-family: var(--mono); font-size: 12px; }
+  .history button { flex: none; padding: 6px 12px; font-size: 14px; }
+  .linkish { background: none; border: 0; padding: 0; font: inherit; font-size: 13px; color: var(--muted); text-decoration: underline; cursor: pointer; justify-self: start; }
+  details { color: var(--muted); font-size: 14px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details ol { padding-left: 20px; margin: 8px 0 0; display: grid; gap: 4px; }
+  @media (prefers-reduced-motion: no-preference) { .result { transition: border-color .2s; } }
+</style>
+
+<main class="wrap">
+  <header>
+    <div class="stars" aria-hidden="true">★★★★★</div>
+    <h1>Link de avaliação do Google</h1>
+    <p>Encontre o estabelecimento no Google Maps, cole o endereço da página aqui e pegue o link que abre direto a tela de avaliação.</p>
+  </header>
+
+  <section class="step" aria-labelledby="s1">
+    <h2 id="s1"><span class="n">1</span> Buscar no Google Maps</h2>
+    <div class="fields">
+      <label for="nome">Nome do estabelecimento
+        <input id="nome" type="text" autocomplete="off" value="Krav Maga Caveira">
+      </label>
+      <label for="cidade">Cidade
+        <input id="cidade" type="text" autocomplete="off" value="Valinhos">
+      </label>
+    </div>
+    <div class="row">
+      <a id="abrirMaps" class="btn" href="#" target="_blank" rel="noopener">Abrir busca no Google Maps ↗</a>
+    </div>
+    <p class="hint">No Maps, clique no estabelecimento certo. Quando a ficha dele abrir, copie o endereço da barra do navegador.</p>
+  </section>
+
+  <section class="step" aria-labelledby="s2">
+    <h2 id="s2"><span class="n">2</span> Colar o endereço da página do Maps</h2>
+    <label for="mapsUrl">Endereço do Google Maps (ou o Place ID)
+      <textarea id="mapsUrl" spellcheck="false">https://www.google.com/maps/place/KRAV+MAGA+CAVEIRA+Valinhos/@-22.9724602,-46.9993958,17z/data=!3m1!4b1!4m6!3m5!1s0x94c8cd1ad952b889:0x4dee22e113e702b0!8m2!3d-22.9724602!4d-46.9993958!16s%2Fg%2F11yr1lyhh9</textarea>
+    </label>
+    <button id="limpar" class="linkish" type="button">Limpar e colar outro</button>
+    <p id="erro" class="msg" hidden></p>
+
+    <article id="resultado" class="result" hidden aria-live="polite">
+      <span id="tag" class="tag">Resultado</span>
+      <h3 id="nomeLocal"></h3>
+      <div class="kv"><span>Place ID</span><code id="placeId"></code></div>
+      <div class="kv link-box"><span>Link de avaliação</span><code id="link"></code></div>
+      <div class="row">
+        <button id="copiar" class="btn" type="button">Copiar link</button>
+        <a id="testar" class="btn ghost" href="#" target="_blank" rel="noopener">Testar link ↗</a>
+        <a id="conferir" class="btn ghost" href="#" target="_blank" rel="noopener">Ver no Maps ↗</a>
+      </div>
+    </article>
+  </section>
+
+  <section class="history" id="historico" hidden aria-labelledby="s3">
+    <h2 id="s3">Gerados neste navegador</h2>
+    <ul id="lista"></ul>
+  </section>
+
+  <details>
+    <summary>Pelo celular</summary>
+    <ol>
+      <li>Toque em "Abrir busca no Google Maps". Se abrir o aplicativo do Maps, use a opção de abrir no navegador.</li>
+      <li>Toque no estabelecimento certo e copie o endereço da barra do navegador.</li>
+      <li>Links curtos (maps.app.goo.gl) do botão "Compartilhar" não funcionam aqui: abra o link curto no navegador e copie o endereço completo que aparecer.</li>
+    </ol>
+  </details>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const REVIEW = "https://search.google.com/local/writereview?placeid=";
+
+  // O endereço do Maps traz o código do lugar (0x…:0x…). O Place ID "ChIJ…" é esse mesmo código
+  // empacotado em protobuf e base64: 0a 12 | 09 + 8 bytes | 11 + 8 bytes.
+  function featureToPlaceId(hi, lo) {
+    const bytes = [0x0a, 0x12, 0x09];
+    const push64 = (v) => { for (let i = 0n; i < 8n; i++) bytes.push(Number((v >> (8n * i)) & 0xffn)); };
+    push64(BigInt(hi)); bytes.push(0x11); push64(BigInt(lo));
+    return btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+
+  function parse(text) {
+    const t = text.trim();
+    if (!t) return { empty: true };
+    if (/maps\.app\.goo\.gl|goo\.gl\/maps/i.test(t)) {
+      return { error: "Esse é um link curto do botão Compartilhar. Abra ele no navegador e copie o endereço completo que aparecer na barra." };
+    }
+    let name = "";
+    const nm = t.match(/\/maps\/place\/([^/@?]+)/);
+    if (nm) { try { name = decodeURIComponent(nm[1].replace(/\+/g, " ")); } catch { name = nm[1]; } }
+    const direct = t.match(/\b(ChIJ[A-Za-z0-9_-]{23})\b/);
+    if (direct) return { placeId: direct[1], name };
+    const f = t.match(/!1s(0x[0-9a-f]+):(0x[0-9a-f]+)/i) || t.match(/ftid=(0x[0-9a-f]+):(0x[0-9a-f]+)/i)
+      || t.match(/^(0x[0-9a-f]+):(0x[0-9a-f]+)$/i);
+    if (f) return { placeId: featureToPlaceId(f[1], f[2]), name };
+    if (/google\.[a-z.]+\/maps/i.test(t)) {
+      return { error: "Esse endereço ainda é da busca. Clique no estabelecimento certo no Maps e copie o endereço depois que a ficha dele abrir." };
+    }
+    return { error: "Não reconheci esse endereço. Cole o endereço completo da página do estabelecimento no Google Maps." };
+  }
+
+  // Passo 1: monta a busca com nome + cidade
+  function updateSearch() {
+    const q = [$("nome").value.trim(), $("cidade").value.trim()].filter(Boolean).join(", ");
+    const a = $("abrirMaps");
+    a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+    a.setAttribute("aria-disabled", q ? "false" : "true");
+  }
+  $("nome").addEventListener("input", updateSearch);
+  $("cidade").addEventListener("input", updateSearch);
+
+  // Histórico só neste navegador
+  const KEY = "link-avaliacao-historico";
+  const loadHist = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+  const saveHist = (h) => { try { localStorage.setItem(KEY, JSON.stringify(h)); } catch {} };
+
+  function renderHist() {
+    const h = loadHist();
+    $("historico").hidden = !h.length;
+    $("lista").replaceChildren(...h.map((it) => {
+      const li = document.createElement("li");
+      const d = document.createElement("div");
+      const s = document.createElement("strong"); s.textContent = it.name || "Sem nome";
+      const sm = document.createElement("small"); sm.textContent = it.placeId;
+      d.append(s, sm);
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn ghost"; b.textContent = "Copiar";
+      b.addEventListener("click", () => copy(REVIEW + it.placeId, b));
+      li.append(d, b);
+      return li;
+    }));
+  }
+
+  function remember(r) {
+    const h = loadHist().filter((x) => x.placeId !== r.placeId);
+    h.unshift({ name: r.name, placeId: r.placeId });
+    saveHist(h.slice(0, 15));
+    renderHist();
+  }
+
+  async function copy(text, btn) {
+    const old = btn.textContent;
+    try { await navigator.clipboard.writeText(text); btn.textContent = "Copiado"; }
+    catch {
+      const range = document.createRange(); range.selectNodeContents($("link"));
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      btn.textContent = "Selecionado, use Ctrl+C";
+    }
+    setTimeout(() => { btn.textContent = old; }, 1800);
+  }
+
+  // Passo 2: lê o endereço colado e gera o link na hora
+  let isExample = true;
+  function update() {
+    const r = parse($("mapsUrl").value);
+    $("erro").hidden = !r.error;
+    $("erro").textContent = r.error || "";
+    $("resultado").hidden = !r.placeId;
+    if (!r.placeId) return;
+    const link = REVIEW + r.placeId;
+    $("tag").textContent = isExample ? "Exemplo" : "Resultado";
+    $("nomeLocal").textContent = r.name || "Estabelecimento";
+    $("placeId").textContent = r.placeId;
+    $("link").textContent = link;
+    $("testar").href = link;
+    $("conferir").href = "https://www.google.com/maps/place/?q=place_id:" + r.placeId;
+    if (!isExample) remember(r);
+  }
+  $("mapsUrl").addEventListener("input", () => { isExample = false; update(); });
+  $("copiar").addEventListener("click", () => copy($("link").textContent, $("copiar")));
+  $("limpar").addEventListener("click", () => { isExample = false; $("mapsUrl").value = ""; update(); $("mapsUrl").focus(); });
+
+  updateSearch();
+  update();
+  renderHist();
+</script>
